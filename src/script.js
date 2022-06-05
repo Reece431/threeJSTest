@@ -4,6 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import { Vector3 } from 'three'
 
+import * as tf from "@tensorflow/tfjs";
+import * as handpose from "@tensorflow-models/handpose";
+
 /**
  * RAYCASTING
  * cast a ray in a specific direction and test what objects intersect with it.
@@ -226,6 +229,32 @@ const constraints = {
     }
 }
 
+const runHandpose = async () => {
+    const net = await handpose.load();
+    console.log("Handpose model loaded.");
+    //  Loop and detect hands
+    setInterval(() => {
+      detect(net);
+    }, 100);
+  };
+
+  const detect = async (net) => {
+      const video = document.querySelector('.video')
+    // Check data is available
+    if (
+      typeof video !== "undefined" &&
+      video !== null &&
+      video.readyState === 4
+    ) {
+      // Make Detections
+      const hand = await net.estimateHands(video);
+      console.log(hand);
+
+      // Draw mesh
+    //   drawHand(hand);
+    }
+  };
+
 async function startWebcam() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -236,6 +265,8 @@ async function startWebcam() {
         console.log(err)
     }
 }
+
+runHandpose();
 
 startWebcam()
 
