@@ -45,7 +45,7 @@ const object3 = new THREE.Mesh(
 )
 object3.position.x = 2
 
-scene.add(object1, object2, object3)
+scene.add(object1)
 
 /**
  * raycaster
@@ -157,12 +157,15 @@ let currentIntersect = null;
 
 const tick = () =>
 {
+
+    runHandpose();
+
     const elapsedTime = clock.getElapsedTime()
 
     // Animate spheres
     object1.position.y = Math.sin(elapsedTime * 0.3) * 1.5
-    object2.position.y = Math.sin(elapsedTime * 1.2) * 1.5
-    object3.position.y = Math.sin(elapsedTime * 0.8) * 1.5
+    // object2.position.y = Math.sin(elapsedTime * 1.2) * 1.5
+    // object3.position.y = Math.sin(elapsedTime * 0.8) * 1.5
 
     // Raycaster
     //origin
@@ -190,11 +193,11 @@ const tick = () =>
     //cating mouse rays
     //this says the rays origin is the mouse and its direction is where the camera points at
     ray.setFromCamera(mouse, camera)
-    const intersets = ray.intersectObjects([object1, object2, object3])
+    const intersets = ray.intersectObjects([object1])
    
     object1.material.color.set('#ff0000');
-    object2.material.color.set('#ff0000');
-    object3.material.color.set('#ff0000');
+    // object2.material.color.set('#ff0000');
+    // object3.material.color.set('#ff0000');
 
     intersets.map(i => {
         i.object.material.color.set('#0000ff')
@@ -240,6 +243,7 @@ const runHandpose = async () => {
 
   const detect = async (net) => {
       const video = document.querySelector('.video')
+      console.log(video)
     // Check data is available
     if (
       typeof video !== "undefined" &&
@@ -248,7 +252,7 @@ const runHandpose = async () => {
     ) {
       // Make Detections
       const hand = await net.estimateHands(video);
-      console.log(hand);
+    //   console.log(hand);
 
       // Draw mesh
     //   drawHand(hand);
@@ -265,8 +269,6 @@ async function startWebcam() {
         console.log(err)
     }
 }
-
-runHandpose();
 
 startWebcam()
 
